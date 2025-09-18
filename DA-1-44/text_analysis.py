@@ -3,7 +3,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-def analyze_text_lengths(reviews, output_file):
+def analyze_text_lengths(reviews):
+    """
+    Analyze the lengths of text reviews and compute statistics.
+
+    Parameters:
+        reviews (list): A list of strings containing the text reviews to analyze.
+
+    Returns:
+        dict: A dictionary containing:
+            - longest_review: Dictionary with the text and length of the longest review.
+            - shortest_review: Dictionary with the text and length of the shortest review.
+            - mean_length: Float representing the mean length of all reviews.
+            - lengths: List of integers representing the length of each review.
+    """
     try:
         if not reviews or not isinstance(reviews, list):
             raise ValueError("Empty list")
@@ -20,18 +33,6 @@ def analyze_text_lengths(reviews, output_file):
         # mean length
         mean_length = df['length'].mean()
         
-        # histogram
-        plt.figure(figsize=(10, 6))
-        plt.hist(df['length'], bins=30, edgecolor='black')
-        plt.title('Distribution')
-        plt.xlabel('Text Length')
-        plt.ylabel('Frequency')
-        
-        # Save
-        output_path = os.path.join(os.path.dirname(__file__), output_file)
-        plt.savefig(output_path)
-        plt.close()
-        
         results = {
             'longest_review': {
                 'text': longest_review['review'],
@@ -41,7 +42,8 @@ def analyze_text_lengths(reviews, output_file):
                 'text': shortest_review['review'],
                 'length': shortest_review['length']
             },
-            'mean_length': mean_length
+            'mean_length': mean_length,
+            'lengths': df['length'].tolist()  # Added for visualization
         }
         
         return results
@@ -49,6 +51,29 @@ def analyze_text_lengths(reviews, output_file):
     except Exception as e:
         print(f"Error: {str(e)}")
         return None
+
+def visualize_text_lengths(lengths, output_file):
+    """
+    Create and save a histogram of text lengths.
+
+    Parameters:
+        lengths (list): List of integers representing the lengths of reviews.
+        output_file (str): File path to save the histogram image.
+
+    Returns:
+        None
+    """
+    # histogram
+    plt.figure(figsize=(10, 6))
+    plt.hist(lengths, bins=30, edgecolor='black')
+    plt.title('Distribution')
+    plt.xlabel('Text Length')
+    plt.ylabel('Frequency')
+    
+    # Save
+    output_path = os.path.join(os.path.dirname(__file__), output_file)
+    plt.savefig(output_path)
+    plt.close()
 
 if __name__ == "__main__":
     sample_reviews = [
@@ -64,9 +89,12 @@ if __name__ == "__main__":
     ]
     
     output_file = 'text_length_histogram.png'
-    results = analyze_text_lengths(sample_reviews,output_file)
+    results = analyze_text_lengths(sample_reviews)
     
     if results:
+        # Visualize the results
+        visualize_text_lengths(results['lengths'], output_file)
+        
         print("Analysis Results:")
         print(f"Longest string: ({results['longest_review']['length']}): {results['longest_review']['text']}")
         print(f"Shortest string ({results['shortest_review']['length']}): {results['shortest_review']['text']}")
