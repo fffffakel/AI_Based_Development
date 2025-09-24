@@ -8,8 +8,8 @@
 # Установка
 1. Клонируйте репозиторий:
 ```
-git clone https://github.com/use/text_length_analysis.git
-cd text_length_analysis
+git clone https://github.com/fffffakel/AI_Based_Development/tree/main/DA-1-44
+cd DA-1-44
 ```
 2. Установите зависимости:
 ```
