@@ -1,12 +1,12 @@
+import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-from sklearn.datasets import load_iris
 from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
-def analyze_dimensionality_reduction():
+def analyze(path_to_dataset):
     """
     Apply t-SNE and PCA to reduce the Iris dataset to 2D and visualize the results.
 
@@ -18,11 +18,17 @@ def analyze_dimensionality_reduction():
             - target_names: List of target class names.
     """
     try:
+        if not os.path.exists(path_to_dataset):
+            raise FileNotFoundError(f"The file {path_to_dataset} does not exist.")
+        
         # Load Iris dataset
-        iris = load_iris()
-        X = iris.data
-        y = iris.target
-        target_names = iris.target_names
+        dataset = pd.read_csv(path_to_dataset)
+        X = dataset.drop(columns="Species")
+        y = dataset["Species"]
+        target_names = list(dataset["Species"].unique())
+
+        # Convert string labels to numerical indices
+        y_numeric = pd.Categorical(y, categories=target_names).codes
 
         # Standardize the data
         scaler = StandardScaler()
@@ -39,7 +45,7 @@ def analyze_dimensionality_reduction():
         results = {
             'tsne_data': tsne_data,
             'pca_data': pca_data,
-            'target': y,
+            'target': y_numeric,
             'target_names': target_names,
         }
 
@@ -49,7 +55,7 @@ def analyze_dimensionality_reduction():
         print(f"Error: {str(e)}")
         return None
 
-def visualize_dimensionality_reduction(tsne_data, pca_data, target, target_names, output_tsne, output_pca):
+def visualize(tsne_data, pca_data, target, target_names, output_tsne, output_pca):
     """
     Create and save scatter plots for t-SNE and PCA 2D projections, colored by target variable.
 
@@ -93,11 +99,13 @@ if __name__ == "__main__":
     output_tsne = 'tsne.png'
     output_pca = 'pca.png'
 
-    results = analyze_dimensionality_reduction()
+    script_dir = os.path.dirname(__file__)
+    path_to_dataset = os.path.join(script_dir, "Iris.csv")
+    results = analyze(path_to_dataset)
 
     if results:
         # Visualize the results
-        visualize_dimensionality_reduction(
+        visualize(
             results['tsne_data'],
             results['pca_data'],
             results['target'],

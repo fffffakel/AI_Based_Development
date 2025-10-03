@@ -21,4 +21,5 @@ pip install -r requirements.txt
 python analysis_corr.py
 ```
 
-Чтобы использовать свои данные, измените path_to_dataset в  if \_\_name__ == "_\_main__": или передайте свой путь в функцию analyze_collinearity
+Чтобы использовать свои данные, измените path_to_dataset в  if \_\_name__ == "_\_main__": или передайте свой путь в функцию analyze
+
